@@ -2,6 +2,12 @@
 <html>
 <head>
 
+    <h2>🕒 {{ today_date }} / {{ current_time }}</h2>
+
+    <h3>🔥 本日摂取したカロリー: {{ total_calorie }} kcal</h3>
+    
+    <h3>🎯 目標カロリー: {{ goal_calorie }} kcal</h3>
+    
     <h2>🧠 よく食べるもの（直近20件）</h2>
 <ul>
     {% for item in recent_items %}
@@ -13,6 +19,7 @@
                 <input type="hidden" name="salt" value="{{ item.salt }}">
                 <input type="hidden" name="time" value="{{ current_time }}">
                 <input type="submit" name="action" value="これ食べた！">
+                <input type="submit" value="🗑️削除">
             </form>
         </li>
     {% endfor %}
@@ -23,7 +30,8 @@
         食べたものの名前: <input type="text" name="name"><br>
         カロリー (kcal): <input type="number" name="calorie"><br>
         塩分 (g): <input type="number" name="salt"><br>
-        食べた時間: <input type="time" name="time"><br>
+        食べた時間: <input type="time" name="time" value="{{ current_time }}"><br>
+
         <input type="submit" name="action" value="食事を記録">
     </form>
 

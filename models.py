@@ -29,3 +29,5 @@ class FoodItem(db.Model):
     time = db.Column(db.Time)
 
     record_id = db.Column(db.Integer, db.ForeignKey('record.id'), nullable=False)
+
+

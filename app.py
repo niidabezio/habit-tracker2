@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect
 from models import db, User
-from datetime import datetime
+from datetime import datetime, timedelta
 from models import FoodItem, Record
 
 app = Flask(__name__)
@@ -44,7 +44,8 @@ def record():
     user_id = 1  # 仮のユーザーID（ログイン機能がないので固定）
 
     if request.method == 'POST':
-        action = request.form['action']
+        action = request.form.get('action')  # ← これなら「なかったら None」で止まらない！
+
 
         if action == '食事を記録' or action == 'これ食べた！':
             name = request.form['name']
@@ -108,10 +109,6 @@ def record():
         total_calorie=total_calorie,
         goal_calorie=goal_calorie
     )
-
-@app.route('/history')
-def history():
-    return render_template('history.html')
 @app.route('/delete_food/<int:food_id>', methods=['POST'])
 def delete_food(food_id):
     food = FoodItem.query.get(food_id)
@@ -119,6 +116,40 @@ def delete_food(food_id):
         db.session.delete(food)
         db.session.commit()
     return redirect('/record')
+
+@app.route('/history')
+def history():
+    user_id = 1  # 仮ユーザー
+
+    # ▼ 過去30日分のデータを取得
+    today = datetime.now().date()
+    month_ago = today - timedelta(days=30)
+
+    records = Record.query.filter(
+        Record.user_id == user_id,
+        Record.record_date >= month_ago
+    ).order_by(Record.record_date.asc()).all()
+
+    # ▼ グラフ用データ作成
+    labels = []
+    weight_data = []
+    calorie_data = []
+    salt_data = []
+
+    for record in records:
+        labels.append(record.record_date.strftime('%m/%d'))
+        weight_data.append(record.weight or 0)
+        calorie_data.append(record.total_calorie or 0)
+        salt_data.append(record.total_salt or 0)
+
+    return render_template(
+        'history.html',
+        records=records,
+        labels=labels,
+        weight_data=weight_data,
+        calorie_data=calorie_data,
+        salt_data=salt_data
+    )
 
 # サーバー起動（開発モード）
 if __name__ == '__main__':

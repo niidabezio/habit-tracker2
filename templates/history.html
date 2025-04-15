@@ -1,10 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>記録一覧</title>
+    <meta charset="utf-8">
+    <title>過去の記録</title>
 </head>
+
 <body>
-    <h1>📈 過去の記録</h1>
-    <p>※まだ表示できるデータはありません</p>
+    <h1>📜 過去の記録</h1>
+    <a href="/record">← 戻る</a>
+    <hr>
+
+    {% for record in records %}
+        <h2>{{ record.record_date.strftime('%Y-%m-%d') }}</h2>
+        <p>体重: {{ record.weight }} kg</p>
+        <p>総カロリー: {{ record.total_calorie or '未集計' }} kcal</p>
+        <p>総塩分: {{ record.total_salt or '未集計' }} g</p>
+
+        <ul>
+        {% for food in record.food_items %}
+            <li>{{ food.time.strftime('%H:%M') }} - {{ food.name }}（{{ food.calorie }} kcal / {{ food.salt }} g）</li>
+        {% endfor %}
+        </ul>
+        <hr>
+    {% endfor %}
+    <h2>📊 体重・カロリー・塩分の推移（過去30日）</h2>
+<canvas id="trendChart" width="100%" height="40"></canvas>
+
 </body>
 </html>

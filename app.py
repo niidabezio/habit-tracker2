@@ -1,3 +1,4 @@
+from models import db, User, Record, FoodItem, FavoriteFood
 from flask import Flask, render_template, request, redirect
 from models import db, User
 from datetime import datetime, timedelta
@@ -78,9 +79,25 @@ def record():
                 record.weight = weight
             db.session.commit()
             return redirect('/record')
+        
+        elif action == 'お気に入りに追加':
+            name = request.form['name']
+            calorie = float(request.form['calorie'])
+            salt = float(request.form['salt'])
+
+            favorite = FavoriteFood(name=name, calorie=calorie, salt=salt, user_id=user_id)
+            db.session.add(favorite)
+            db.session.commit()
+            return redirect('/record')
 
         # 🟡 ここがGET処理（画面を表示）
+    today = datetime.now().date()
+    record = Record.query.filter_by(record_date=today, user_id=user_id).first()
+
+
     recent_items = FoodItem.query.order_by(FoodItem.id.desc()).limit(20).all()
+    favorite_items = FavoriteFood.query.filter_by(user_id=user_id).all()
+
 
     # 🕒 今日の日付と現在時刻
     today_date = datetime.now().strftime('%Y年%m月%d日')

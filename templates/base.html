@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>生活習慣アプリ</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+        }
+        .navbar {
+            background-color: #333;
+            padding: 10px;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-right: 15px;
+        }
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+        .content {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <a href="/">🏠 ホーム</a>
+    <a href="/profile">👤 プロフィール</a>
+    <a href="/record">📝 今日の記録</a>
+    <a href="/history">📊 履歴とグラフ</a>
+</div>
+
+<div class="content">
+    {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>

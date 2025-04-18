@@ -8,6 +8,7 @@ class User(db.Model):
     age = db.Column(db.Integer)
     height = db.Column(db.Float)
     weight = db.Column(db.Float)
+    favorite_foods = db.relationship('FavoriteFood', backref='user', lazy=True)
 
     records = db.relationship('Record', backref='user', lazy=True)
 
@@ -31,3 +32,9 @@ class FoodItem(db.Model):
     record_id = db.Column(db.Integer, db.ForeignKey('record.id'), nullable=False)
 
 
+class FavoriteFood(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    calorie = db.Column(db.Float)
+    salt = db.Column(db.Float)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

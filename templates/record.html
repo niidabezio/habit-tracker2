@@ -1,6 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
+{% extends "base.html" %}
+
+{% block content %}
 
     <h2>🕒 {{ today_date }} / {{ current_time }}</h2>
 
@@ -28,6 +28,22 @@
         </li>
     {% endfor %}
 </ul>
+<h2>🧡 お気に入りの食べ物</h2>
+<ul>
+  {% for item in favorite_items %}
+    <li>
+      {{ item.name }} ({{ item.calorie }}kcal / {{ item.salt }}g)
+      <form method="POST" style="display:inline;">
+        <input type="hidden" name="name" value="{{ item.name }}">
+        <input type="hidden" name="calorie" value="{{ item.calorie }}">
+        <input type="hidden" name="salt" value="{{ item.salt }}">
+        <input type="hidden" name="time" value="{{ current_time }}">
+        <input type="submit" name="action" value="これ食べた！">
+      </form>
+    </li>
+  {% endfor %}
+</ul>
+
 
     <h2>🍽 食事の記録</h2>
     <form method="POST">
@@ -37,6 +53,8 @@
         食べた時間: <input type="time" name="time" value="{{ current_time }}"><br>
 
         <input type="submit" name="action" value="食事を記録">
+        <input type="submit" name="action" value="お気に入りに追加">
+
     </form>
 
     <h2>⚖️ 体重の記録</h2>
@@ -46,5 +64,4 @@
 </form>
 
     
-</body>
-</html>
+{% endblock %}

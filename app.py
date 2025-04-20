@@ -3,6 +3,8 @@ from flask import Flask, render_template, request, redirect
 from models import db, User
 from datetime import datetime, timedelta
 from models import FoodItem, Record
+from models import FavoriteFood
+
 
 app = Flask(__name__)
 
@@ -81,6 +83,7 @@ def record():
             return redirect('/record')
         
         elif action == 'お気に入りに追加':
+            print("お気に入り追加処理が呼ばれました")
             name = request.form['name']
             calorie = float(request.form['calorie'])
             salt = float(request.form['salt'])
@@ -121,6 +124,7 @@ def record():
     return render_template(
         'record.html',
         recent_items=recent_items,
+        favorite_items=favorite_items,
         current_time=now_time,
         today_date=today_date,
         total_calorie=total_calorie,
@@ -133,6 +137,15 @@ def delete_food(food_id):
         db.session.delete(food)
         db.session.commit()
     return redirect('/record')
+
+@app.route('/delete_favorite/<int:favorite_id>', methods=['POST'])
+def delete_favorite(favorite_id):
+    favorite = FavoriteFood.query.get(favorite_id)
+    if favorite:
+        db.session.delete(favorite)
+        db.session.commit()
+    return redirect('/record')
+
 
 @app.route('/history')
 def history():

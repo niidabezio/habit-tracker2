@@ -40,6 +40,8 @@
         <input type="hidden" name="time" value="{{ current_time }}">
         <input type="submit" name="action" value="これ食べた！">
       </form>
+      <form method="POST" action="/delete_favorite/{{ item.id }}" style="display:inline;">
+        <input type="submit" value="🗑️削除">
     </li>
   {% endfor %}
 </ul>

@@ -18,6 +18,8 @@ from flask_migrate import Migrate
 
 migrate = Migrate(app, db)
 
+
+
 # ルートページの表示（動作確認用）
 @app.route('/')
 def home():
@@ -97,6 +99,10 @@ def record():
     today = datetime.now().date()
     record = Record.query.filter_by(record_date=today, user_id=user_id).first()
 
+    # 今日食べたもの（FoodItem）を取り出す
+    today_items = []  # ← ここを追加！
+    if record:
+        today_items = record.food_items
 
     recent_items = FoodItem.query.order_by(FoodItem.id.desc()).limit(20).all()
     favorite_items = FavoriteFood.query.filter_by(user_id=user_id).all()
@@ -125,6 +131,7 @@ def record():
         'record.html',
         recent_items=recent_items,
         favorite_items=favorite_items,
+        today_items=today_items,
         current_time=now_time,
         today_date=today_date,
         total_calorie=total_calorie,

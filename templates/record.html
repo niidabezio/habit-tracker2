@@ -4,6 +4,14 @@
 
     <h2>🕒 {{ today_date }} / {{ current_time }}</h2>
 
+    <h3>🍽 本日食べたもの</h3>
+<ul>
+  {% for item in today_items %}
+    <li>🕒 {{ item.time.strftime('%H:%M') }} - {{ item.name }} ({{ item.calorie }}kcal / {{ item.salt }}g)</li>
+  {% endfor %}
+</ul>
+
+
     <h3>🔥 本日摂取したカロリー: {{ total_calorie }} kcal</h3>
     
     <h3>🎯 目標カロリー: {{ goal_calorie }} kcal</h3>

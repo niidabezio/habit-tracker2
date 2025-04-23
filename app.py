@@ -52,7 +52,7 @@ def record():
         action = request.form.get('action')  # ← これなら「なかったら None」で止まらない！
 
 
-        if action == '食事を記録' or action == 'これ食べた！':
+        if action == '食事を記録' or action == '食':
             name = request.form['name']
             calorie = float(request.form['calorie'])
             salt = float(request.form['salt'])

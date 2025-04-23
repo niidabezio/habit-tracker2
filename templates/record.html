@@ -26,11 +26,11 @@
                 <input type="hidden" name="calorie" value="{{ item.calorie }}">
                 <input type="hidden" name="salt" value="{{ item.salt }}">
                 <input type="hidden" name="time" value="{{ current_time }}">
-                <input type="submit" name="action" value="これ食べた！">
+                <input type="submit" name="action" value="食" class="btn btn-eat">
                 
             </form>
             <form method="POST" action="/delete_food/{{ item.id }}" style="display:inline;">
-                <input type="submit" value="🗑️削除">
+                <input type="submit" value="🗑️" class="btn btn-delete">
             </form>
             
         </li>
@@ -46,10 +46,10 @@
         <input type="hidden" name="calorie" value="{{ item.calorie }}">
         <input type="hidden" name="salt" value="{{ item.salt }}">
         <input type="hidden" name="time" value="{{ current_time }}">
-        <input type="submit" name="action" value="これ食べた！">
+        <input type="submit" name="action" value="食" class="btn btn-eat">
       </form>
       <form method="POST" action="/delete_favorite/{{ item.id }}" style="display:inline;">
-        <input type="submit" value="🗑️削除">
+        <input type="submit" value="🗑️" class="btn btn-delete">
     </li>
   {% endfor %}
 </ul>

@@ -26,6 +26,7 @@ class FoodItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     calorie = db.Column(db.Float)
+    protein = db.Column(db.Float)  # ← 追加！
     salt = db.Column(db.Float)
     time = db.Column(db.Time)
 
@@ -38,3 +39,4 @@ class FavoriteFood(db.Model):
     calorie = db.Column(db.Float)
     salt = db.Column(db.Float)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+

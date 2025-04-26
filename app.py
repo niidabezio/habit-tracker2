@@ -55,6 +55,7 @@ def record():
         if action == '食事を記録' or action == '食':
             name = request.form['name']
             calorie = float(request.form['calorie'])
+            protein = float(request.form['protein'])  # ← 追加！
             salt = float(request.form['salt'])
             time_str = request.form.get('time') or datetime.now().strftime('%H:%M')
             time_obj = datetime.strptime(time_str, '%H:%M').time()
@@ -66,7 +67,7 @@ def record():
                 db.session.add(record)
                 db.session.commit()
 
-            food = FoodItem(name=name, calorie=calorie, salt=salt, time=time_obj, record_id=record.id)
+            food = FoodItem(name=name, calorie=calorie, protein=protein, salt=salt, time=time_obj, record_id=record.id)
             db.session.add(food)
             db.session.commit()
 
@@ -105,6 +106,13 @@ def record():
         today_items = record.food_items
 
     recent_items = FoodItem.query.order_by(FoodItem.id.desc()).limit(20).all()
+        # 🔽 重複を取り除く（名前が同じものは1つにする）
+    unique_items = []
+    seen_names = set()
+    for item in recent_items:
+        if item.name not in seen_names:
+            unique_items.append(item)
+            seen_names.add(item.name)
     favorite_items = FavoriteFood.query.filter_by(user_id=user_id).all()
 
 
@@ -123,13 +131,17 @@ def record():
     if record and record.food_items:
         total_calorie = sum([f.calorie for f in record.food_items])
 
+    total_protein = 0
+    if record and record.food_items:
+        total_protein = sum([f.protein or 0 for f in record.food_items])
+
     # 🎯 目標カロリー（体重ベースのざっくり計算）
     goal_calorie = int(22 * user.weight + 200)
 
     # 📤 HTML に渡す変数
     return render_template(
         'record.html',
-        recent_items=recent_items,
+        recent_items=unique_items,  # ← 重複なしのリストに！
         favorite_items=favorite_items,
         today_items=today_items,
         current_time=now_time,

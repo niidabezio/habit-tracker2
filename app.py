@@ -54,9 +54,21 @@ def record():
 
         if action == '食事を記録' or action == '食':
             name = request.form['name']
-            calorie = float(request.form['calorie'])
-            protein = float(request.form['protein'])  # ← 追加！
-            salt = float(request.form['salt'])
+
+            # 👇 ここから追加！
+            calorie_str = request.form.get('calorie')
+            calorie = float(calorie_str) if calorie_str and calorie_str != 'None' else 0
+
+            salt_str = request.form.get('salt')
+            salt = float(salt_str) if salt_str and salt_str != 'None' else 0
+
+            protein_str = request.form.get('protein')
+            protein = float(protein_str) if protein_str and protein_str != 'None' else 0
+            # 👆 ここまで追加！
+
+            time_str = request.form.get('time') or datetime.now().strftime('%H:%M')
+            time_obj = datetime.strptime(time_str, '%H:%M').time()
+            
             time_str = request.form.get('time') or datetime.now().strftime('%H:%M')
             time_obj = datetime.strptime(time_str, '%H:%M').time()
 

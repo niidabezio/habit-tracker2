@@ -5,15 +5,36 @@
     <h2>🕒 {{ today_date }} / {{ current_time }}</h2>
 
     <h3>🍽 本日食べたもの</h3>
-    <div class="today-list">
-      {% for item in today_items %}
-        <div class="today-item">
-          <span class="time">🕒 {{ item.time.strftime('%H:%M') }}</span>
-          <span class="name">{{ item.name }}</span>
-          <span class="info">{{ item.calorie }} kcal / {{ item.salt }}g</span>
-        </div>
-      {% endfor %}
-    </div>
+      <table class="today-table">
+        <thead>
+          <tr>
+            <th>🕒 時間</th>
+            <th>🍴 食べ物</th>
+            <th>🔥 カロリー</th>
+            <th>🧂 塩分</th>
+            <th>💪 たんぱく質</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in today_items %}
+          <tr>
+            <td>{{ item.time.strftime('%H:%M') }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.calorie }} kcal</td>
+            <td>{{ item.salt }} g</td>
+            <td>{{ item.protein }} g</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div class="totals">
+        <p>🔥 合計カロリー: {{ total_calorie }} kcal</p>
+        <p>🧂 合計塩分: {{ total_salt }} g</p>
+        <p>💪 合計たんぱく質: {{ total_protein }} g</p>
+      </div>
+      
+
     
 
 
@@ -24,7 +45,7 @@
     <h3>💪 本日摂取したたんぱく質: {{ total_protein }} g</h3>
 
     
-    <h2>🧠 よく食べるもの（直近20件）</h2>
+    <h2>🍔　よく食べるもの（直近20件）</h2>
 <ul>
     {% for item in recent_items %}
         <li>
@@ -32,6 +53,7 @@
             <form method="POST" style="display:inline;">
                 <input type="hidden" name="name" value="{{ item.name }}">
                 <input type="hidden" name="calorie" value="{{ item.calorie }}">
+                <input type="hidden" name="protein" value="{{ item.protein }}">  <!-- ← これ追加！ -->
                 <input type="hidden" name="salt" value="{{ item.salt }}">
                 <input type="hidden" name="time" value="{{ current_time }}">
                 <input type="submit" name="action" value="食" class="btn btn-eat">

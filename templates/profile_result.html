@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>👤 登録されたプロフィール</h2>
+<ul>
+  <li>性別: {{ user.gender }}</li>
+  <li>年齢: {{ user.age }}</li>
+  <li>身長: {{ user.height }} cm</li>
+  <li>体重: {{ user.weight }} kg</li>
+</ul>
+
+<h2>🎯 理想的な1日の摂取カロリー</h2>
+<p><strong>{{ ideal_calorie }} kcal</strong></p>
+
+<h3>📘 計算方法</h3>
+<p>
+  基礎代謝（BMR）: {{ bmr | round(2) }} kcal<br>
+  活動係数: {{ activity }}<br>
+  → {{ bmr | round(2) }} × {{ activity }} = {{ ideal_calorie }} kcal
+</p>
+
+{% endblock %}

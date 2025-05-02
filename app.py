@@ -4,9 +4,13 @@ from models import db, User
 from datetime import datetime, timedelta
 from models import FoodItem, Record
 from models import FavoriteFood
+from flask import session
+
 
 
 app = Flask(__name__)
+app.secret_key = '1234'  # セッションに必要（なんでもOK）
+
 
 # PostgreSQLに接続する設定
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:niida0@localhost:5432/habit_db'
@@ -28,25 +32,66 @@ def home():
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
+
+    if 'user_id' in session and request.method == 'GET':
+        user = User.query.get(session['user_id'])
+
+        # 同じ計算ロジック（繰り返しなので後で関数化してもOK）
+        if user.gender == "男性":
+            bmr = 10 * user.weight + 6.25 * user.height - 5 * user.age + 5
+        else:
+            bmr = 10 * user.weight + 6.25 * user.height - 5 * user.age - 161
+
+        activity = 1.5
+        ideal_calorie = int(bmr * activity)
+
+        return render_template('profile_result.html',
+                               user=user,
+                               ideal_calorie=ideal_calorie,
+                               bmr=bmr,
+                               activity=activity)
+    
     if request.method == 'POST':
-        # 入力された内容をPythonの変数に取り出す
+        # 入力内容を取得
         gender = request.form['gender']
         age = int(request.form['age'])
         height = float(request.form['height'])
         weight = float(request.form['weight'])
 
-        # データベースに保存する
+        # ユーザー登録
         new_user = User(gender=gender, age=age, height=height, weight=weight)
         db.session.add(new_user)
         db.session.commit()
 
-        return "プロフィール登録が完了しました！"
+        # ✅ ユーザーIDをセッションに保存
+        session['user_id'] = new_user.id
+
+        # 計算（ハリス-ベネディクト式）
+        if gender == "男性":
+            bmr = 10 * weight + 6.25 * height - 5 * age + 5
+        else:
+            bmr = 10 * weight + 6.25 * height - 5 * age - 161
+
+        activity = 1.5  # 一般的な活動レベル
+        ideal_calorie = int(bmr * activity)
+
+        # 結果ページへ
+        return render_template('profile_result.html',
+                               user=new_user,
+                               ideal_calorie=ideal_calorie,
+                               bmr=bmr,
+                               activity=activity)
     else:
         return render_template('profile.html')
 
 @app.route('/record', methods=['GET', 'POST'])
 def record():
-    user_id = 1  # 仮のユーザーID（ログイン機能がないので固定）
+    user_id = session.get('user_id')
+
+    if not user_id:
+        return redirect('/profile')  # 未登録ならプロフィールへ
+
+    user = User.query.get(user_id)
 
     if request.method == 'POST':
         action = request.form.get('action')  # ← これなら「なかったら None」で止まらない！

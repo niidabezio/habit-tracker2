@@ -33,6 +33,10 @@ def home():
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
 
+    if request.method == 'GET' and 'reset' in request.args:
+        session.pop('user_id', None)
+        return render_template('profile.html')
+
     if 'user_id' in session and request.method == 'GET':
         user = User.query.get(session['user_id'])
 
@@ -45,11 +49,17 @@ def profile():
         activity = 1.5
         ideal_calorie = int(bmr * activity)
 
+        # 追加：理想のたんぱく質・塩分
+        ideal_protein = round(user.weight * 1.2, 1)  # 体重×1.2g
+        ideal_salt = 6.0  # g
+
         return render_template('profile_result.html',
-                               user=user,
-                               ideal_calorie=ideal_calorie,
-                               bmr=bmr,
-                               activity=activity)
+                       user=user,
+                       ideal_calorie=ideal_calorie,
+                       bmr=bmr,
+                       activity=activity,
+                       ideal_protein=ideal_protein,
+                       ideal_salt=ideal_salt)
     
     if request.method == 'POST':
         # 入力内容を取得
@@ -75,13 +85,20 @@ def profile():
         activity = 1.5  # 一般的な活動レベル
         ideal_calorie = int(bmr * activity)
 
+        # 追加：理想のたんぱく質・塩分
+        ideal_protein = round(weight * 1.2, 1)
+        ideal_salt = 6.0
+
         # 結果ページへ
         return render_template('profile_result.html',
                                user=new_user,
                                ideal_calorie=ideal_calorie,
                                bmr=bmr,
-                               activity=activity)
-    else:
+                               activity=activity,
+                               ideal_protein=ideal_protein,
+                               ideal_salt=ideal_salt
+                            )
+                               
         return render_template('profile.html')
 
 @app.route('/record', methods=['GET', 'POST'])

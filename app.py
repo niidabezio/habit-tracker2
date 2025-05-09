@@ -218,7 +218,13 @@ def record():
         total_protein = sum([f.protein or 0 for f in record.food_items])
 
     # 🎯 目標カロリー（体重ベースのざっくり計算）
-    goal_calorie = int(22 * user.weight + 200)
+    if user.gender == "男性":
+        bmr = 10 * user.weight + 6.25 * user.height - 5 * user.age + 5
+    else:
+        bmr = 10 * user.weight + 6.25 * user.height - 5 * user.age - 161
+    activity = 1.5
+    goal_calorie = int(bmr * activity)
+
 
     # 📤 HTML に渡す変数
     return render_template(

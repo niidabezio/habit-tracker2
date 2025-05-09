@@ -112,8 +112,16 @@ def record():
 
     if request.method == 'POST':
         action = request.form.get('action')  # ← これなら「なかったら None」で止まらない！
+        
+        # 🔥 理想カロリーを再計算（プロフィールと同じ式）
+        if user.gender == "男性":
+            bmr = 10 * user.weight + 6.25 * user.height - 5 * user.age + 5
+        else:
+            bmr = 10 * user.weight + 6.25 * user.height - 5 * user.age - 161
 
-
+        activity = 1.5  # ここも合わせる
+        goal_calorie = int(bmr * activity)
+        
         if action == '食事を記録' or action == '食':
             name = request.form['name']
 

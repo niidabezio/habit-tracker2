@@ -13,7 +13,8 @@ app.secret_key = '1234'  # セッションに必要（なんでもOK）
 
 
 # PostgreSQLに接続する設定
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:niida0@localhost:5432/habit_db'
+import os
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # DB初期化

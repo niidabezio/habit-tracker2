@@ -29,6 +29,13 @@ migrate = Migrate(app, db)
 def home():
     return render_template('index.html')
 
+@app.route('/init-db')
+def init_db():
+    from models import db
+    db.create_all()
+    return "✅ データベース初期化完了しました"
+
+
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():

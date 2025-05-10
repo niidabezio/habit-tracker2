@@ -106,7 +106,7 @@ def profile():
                                ideal_salt=ideal_salt
                             )
                                
-        return render_template('profile.html')
+    return render_template('profile.html')
 
 @app.route('/record', methods=['GET', 'POST'])
 def record():

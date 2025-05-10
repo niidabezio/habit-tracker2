@@ -39,15 +39,9 @@ def home():
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
-
-    if request.method == 'GET' and 'reset' in request.args:
-        session.pop('user_id', None)
-        return render_template('profile.html')
-
     if 'user_id' in session and request.method == 'GET':
         user = User.query.get(session['user_id'])
 
-        # 同じ計算ロジック（繰り返しなので後で関数化してもOK）
         if user.gender == "男性":
             bmr = 10 * user.weight + 6.25 * user.height - 5 * user.age + 5
         else:
@@ -55,57 +49,48 @@ def profile():
 
         activity = 1.5
         ideal_calorie = int(bmr * activity)
-
-        # 追加：理想のたんぱく質・塩分
-        ideal_protein = round(user.weight * 1.2, 1)  # 体重×1.2g
-        ideal_salt = 6.0  # g
+        ideal_protein = round(user.weight * 1.2, 1)
+        ideal_salt = 6.0
 
         return render_template('profile_result.html',
-                       user=user,
-                       ideal_calorie=ideal_calorie,
-                       bmr=bmr,
-                       activity=activity,
-                       ideal_protein=ideal_protein,
-                       ideal_salt=ideal_salt)
-    
-    if request.method == 'POST':
-        # 入力内容を取得
+                               user=user,
+                               ideal_calorie=ideal_calorie,
+                               bmr=bmr,
+                               activity=activity,
+                               ideal_protein=ideal_protein,
+                               ideal_salt=ideal_salt)  # ← 🔴 これが必要！
+
+    elif request.method == 'POST':
         gender = request.form['gender']
         age = int(request.form['age'])
         height = float(request.form['height'])
         weight = float(request.form['weight'])
 
-        # ユーザー登録
         new_user = User(gender=gender, age=age, height=height, weight=weight)
         db.session.add(new_user)
         db.session.commit()
 
-        # ✅ ユーザーIDをセッションに保存
         session['user_id'] = new_user.id
 
-        # 計算（ハリス-ベネディクト式）
         if gender == "男性":
             bmr = 10 * weight + 6.25 * height - 5 * age + 5
         else:
             bmr = 10 * weight + 6.25 * height - 5 * age - 161
 
-        activity = 1.5  # 一般的な活動レベル
+        activity = 1.5
         ideal_calorie = int(bmr * activity)
-
-        # 追加：理想のたんぱく質・塩分
         ideal_protein = round(weight * 1.2, 1)
         ideal_salt = 6.0
 
-        # 結果ページへ
         return render_template('profile_result.html',
                                user=new_user,
                                ideal_calorie=ideal_calorie,
                                bmr=bmr,
                                activity=activity,
                                ideal_protein=ideal_protein,
-                               ideal_salt=ideal_salt
-                            )
-                               
+                               ideal_salt=ideal_salt)  # 🔴 ここも return 必須！
+
+    # 🔻 最後に fallback の return を忘れずに
     return render_template('profile.html')
 
 @app.route('/record', methods=['GET', 'POST'])

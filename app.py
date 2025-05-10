@@ -18,6 +18,13 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # DB初期化
 db.init_app(app)
+
+# ✅ 一時的な初期化ルート
+@app.route('/init-db')
+def init_db():
+    db.create_all()
+    return "✅ データベース初期化完了しました"
+
 from flask_migrate import Migrate
 
 migrate = Migrate(app, db)
@@ -28,13 +35,6 @@ migrate = Migrate(app, db)
 @app.route('/')
 def home():
     return render_template('index.html')
-
-@app.route('/init-db')
-def init_db():
-    from models import db
-    db.create_all()
-    return "✅ データベース初期化完了しました"
-
 
 
 @app.route('/profile', methods=['GET', 'POST'])

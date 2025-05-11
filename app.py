@@ -1,5 +1,7 @@
 from models import db, User, Record, FoodItem, FavoriteFood
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, session, redirect
+from models import db, User  # ← 必要なモデルをインポート
+from datetime import datetime
 from models import db, User
 from datetime import datetime, timedelta
 from models import FoodItem, Record
